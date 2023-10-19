@@ -1,0 +1,73 @@
+{% extends 'index.html' %}
+{% block message %}
+    {% if message %}
+        <!-- <script>
+            alert({{ message | tojson}})
+        </script> -->
+    {% endif %}
+    <h1>TASK LISTS</h1>        
+    <div class="container">
+        <div class="items">
+            <h6>
+                <button type="button" style="background-color: green;" data-bs-toggle="modal" data-bs-target="#addlist">
+                <i class="fas fa-plus"> New List</i>
+                </button>
+            </h6>    
+            <div class="modal fade" id="addlist" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content ">
+                        <div class="modal-header">
+                            Add list
+                        </div>
+                        <form method="post" action="{{url_for('addlist')}}">
+                        <div class="modal-body"> 
+                            Title : <input type="text" name="name" required>     
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                        </form>      
+                    </div>
+                </div>
+            </div>              
+            <table> 
+                <tr>
+                    <td>Default</td>
+                    <td><a href="{{url_for('change_list',list_name = 'Default')}}"><button style="background-color: rgb(96, 93, 93); width: 70px;" ><i class="fas fa-eye"></i></button></a></td> 
+                </tr> 
+                {% for list in lists%}
+                    <tr>
+                        <td>{{list[1]}}</td>
+                        <td><a href="{{url_for('change_list',list_name = list[1])}}"><button style="background-color: rgb(96, 93, 93); width: 70px;" ><i class="fas fa-eye"></i></button></a></td> 
+                        <td>
+                            <button type="button" style="background-color: rgb(220, 163, 40); width: 70px; " data-bs-toggle="modal" data-bs-target="#updatelist{{list[0]}}">
+                                <i class="fas fa-edit"></i></button>
+                            </button>
+                            <div class="modal fade" id="updatelist{{list[0]}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content ">
+                                        <div class="modal-header">
+                                            Update list
+                                        </div>
+                                        <form method="post" action="{{url_for('update_list',list_id=list[0])}}">
+                                        <div class="modal-body"> 
+                                            Title : <input type="text"  name="name" value="{{list[1]}}" required>     
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </div>
+                                        </form>      
+                                    </div>
+                                </div>
+                            </div>
+                        </td>                        
+                        <td><a href="{{url_for('deletelist',list_name =list[1])}}"><button style="background-color: rgb(219, 16, 16); width: 70px; "><i class="fas fa-trash" ></i></button></a></td>                       
+                    </tr>                            
+                {% endfor %}                    
+            </table>
+        </div>
+    </div>
+    
+{% endblock %}

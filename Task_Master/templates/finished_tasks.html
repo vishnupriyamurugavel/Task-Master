@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+{% block message %}
+    {% if tasks%}
+        <div class="container">
+            <div class="items">
+                <h1>Finished Tasks</h1>
+                <h6>
+                    <form method="post" class="d-flex" action="{{url_for('finished_tasks')}}">
+                        <input class="form-control me-2"  placeholder="Title,Due Date(yyyy-mm-dd)" name="search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit" style="background-color: black;"><i class="fas fa-search" ></i></button>
+                    </form>                     
+                    <div>
+                        <a  class="btn btn-secondary dropdown-toggle" role="button" id="sortfinishedtasks" data-bs-toggle="dropdown" aria-expanded="false" id="sort">
+                        Sort By
+                        </a>                    
+                        <ul class="dropdown-menu" aria-labelledby="sortfinishedtasks">
+                        <li><a class="dropdown-item" href="{{url_for('sort_finished_tasks',criteria = 'list')}}" style="color: black;">Category</a></li>                         
+                        <li><a class="dropdown-item" href="{{url_for('sort_finished_tasks',criteria = 'createddate')}}" style="color: black;">Created Date</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('sort_finished_tasks',criteria = 'duedate')}}" style="color: black;">Due Date</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('sort_finished_tasks',criteria = 'title')}}"  style="color: black;">Title</a></li>
+                        </ul>
+                    </div>
+                    
+                    <a href="{{url_for('download',tasks=tasks)}}">
+                        <button style="background-color: rgb(30, 67, 91); padding: 10px; color: white;" > 
+                            <i class="fas fa-arrow-circle-down"> Download</i>
+                        </button>
+                    </a>
+                </h6>                 
+                <table>          
+                    {% for task in tasks %}
+                        <tr>
+                            <td>
+                                <h5>{{task[2]}}</h5>
+                                <p>{{task[5]}}</p>
+                                {% if session['list']=='All lists'%}
+                                <p >{{task[3]}}</p>
+                                {% endif %}                                
+                            </td>                            
+                            <td><a href="{{url_for('delete_finished_task',task_id=task[0])}}"><button style="background-color: rgb(219, 16, 16);width: 70px;"><i class="fas fa-trash" > </i></button></a></td>                       
+                            <td><a href="{{url_for('update_finished_status',task_id=task[0])}}">
+                                <button style="background-color: rgb(24, 114, 193); color: white;">{% if task[6]==0%}Done{% else %} Undo {% endif %}</button></a>
+                            </td> 
+                        </tr>                            
+                    {% endfor %}                    
+                </table>
+            </div>
+        </div>
+        
+    {% else %}    
+        <h1 style="padding-top: 50px;">No Tasks found</h1>        
+        <img src="http://127.0.0.1:5000/static/images/nolist.svg" style="display: block; margin:auto; opacity: 40%; width: 300px;">
+    {% endif %}
+    
+{% endblock %}

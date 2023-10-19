@@ -1,0 +1,28 @@
+<html>
+    <head>   
+        <title>TaskMaster</title>     
+        <link rel="stylesheet" href="http://127.0.0.1:5000/static/styles/login.css">
+    </head>
+    <body>        
+        <h1>Task Master</h1>
+        <p>A little organization goes a long way.</p><br><br>        
+        
+        <div class="container">
+            <img class="items" id="large-screen-only" src="http://127.0.0.1:5000/static/images/login.svg" alt="Image" class="large-screen-only">
+            <div class="items">
+                {% if message%}
+                <h3 style="color: red; text-align: center;">{{message}}!<h3>
+                {% endif %}
+                <form method="post" action="{{url_for('login')}}">
+                    <label for="username">Username</label><br>
+                    <input type="text" id="username" name="username" required><br><br>
+                    <label for="password">Password</label><br>
+                    <input type="password" id="password" name="password" minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^\w\s])[a-zA-Z\d\W]+$" title="The password should be at least 8 characters long and must contain a combination of uppercase and lowercase letters, digits, and special characters" required><br><br>
+                    <input type="submit" value="Login">
+                </form>
+                <p>New User? <a href="{{url_for('register')}}">SignUp</a> </p>
+            </div>
+        </div>   
+
+    </body>
+</html>

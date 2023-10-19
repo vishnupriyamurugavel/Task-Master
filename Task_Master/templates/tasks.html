@@ -1,0 +1,140 @@
+{% extends 'index.html' %}
+{% block message %}
+    {% if tasks%}
+        <div class="container">
+            <div class="items">
+                <h1>Tasks</h1>
+                <h6>
+                    <form method="post" class="d-flex" action="{{url_for('tasks')}}">
+                        <input class="form-control me-2"  placeholder="Title,Due Date(yyyy-mm-dd)" name="search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit" style="background-color: black;"><i class="fas fa-search" ></i></button>
+                    </form>
+                     
+                    <div>
+                        <a  class="btn btn-secondary dropdown-toggle" role="button" id="sorttasks" data-bs-toggle="dropdown" aria-expanded="false" id="sort">
+                        Sort By
+                        </a>                    
+                        <ul class="dropdown-menu" aria-labelledby="sorttasks">
+                        {% if session['list']=='All lists'%}
+                        <li><a class="dropdown-item" href="{{url_for('sort_tasks',criteria = 'list')}}" style="color: black;">Category</a></li>
+                        {% endif %}                          
+                        <li><a class="dropdown-item" href="{{url_for('sort_tasks',criteria = 'status')}}" style="color: black;">Status</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('sort_tasks',criteria = 'createddate')}}" style="color: black;">Created Date</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('sort_tasks',criteria = 'duedate')}}" style="color: black;">Due Date</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('sort_tasks',criteria = 'title')}}"  style="color: black;">Title</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <button type="button" style="background-color: green; padding: 10px;" data-bs-toggle="modal" data-bs-target="#addtask">
+                            <i class="fas fa-plus"> New Task</i>
+                        </button>
+                    </div>
+                    <a href="{{url_for('download',tasks=tasks)}}">
+                        <button style="background-color: rgb(30, 67, 91); padding: 10px; color: white;" > 
+                            <i class="fas fa-arrow-circle-down"> Download</i>
+                        </button>
+                    </a>
+                    
+                    
+                </h6>                 
+                <table>          
+                    {% for task in tasks %}
+                        <tr>
+                            <td>
+                                <h5>{{task[2]}}</h5>
+                                <p>{{task[5]}}</p>
+                                {% if session['list']=='All lists'%}
+                                <p >{{task[3]}}</p>
+                                {% endif %}
+                                {% if task[6]==0 %}
+                                <p style="color: orange;">Not completed</p>
+                                {% elif task[6]==-1 %}
+                                <p style="color: red;">Overdue</p>
+                                {% else %}
+                                <p style="color: green;">Completed</p>
+                                {% endif %}
+                            </td>  
+                            {% if task[6]!=1%}                          
+                            <td>
+                                <button type="button" style="background-color: rgb(220, 163, 40); width: 70px; " data-bs-toggle="modal" data-bs-target="#updatetask{{task[0]}}">
+                                    <i class="fas fa-edit"></i></button>
+                                </button>
+                                <div class="modal fade" id="updatetask{{task[0]}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content ">
+                                            <div class="modal-header">
+                                                Update Task
+                                            </div>
+                                            <form method="post" action="{{url_for('update_task',task_id=task[0])}}">
+                                            <div class="modal-body"> 
+                                                <label for="title" >Title</label><br>    
+                                                <input type="text" id="title" name="title" value="{{task[2]}}" required><br>
+                                                <label for="duedate">Due Date</label> <br>  
+                                                <input type="date" id="duedate" value="{{task[5]}}" name="duedate"><br>
+                                                <label for="list">List</label><br>
+                                                <select id="list" name="list">
+                                                    {% for list in lists %}
+                                                    <option value="{{list[1]}}" {% if list[1]== task[3] %} selected {% endif %}>{{list[1]}}</option>
+                                                    {% endfor %}                       
+                                                </select>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                            </form>      
+                                        </div>
+                                    </div>
+                                </div>
+                            </td> 
+                            {% else %}
+                            <td></td>
+                            {% endif %}
+                            <td><a href="{{url_for('delete_task',task_id=task[0])}}"><button style="background-color: rgb(219, 16, 16);width: 70px;"><i class="fas fa-trash" > </i></button></a></td>                       
+                            <td><a href="{{url_for('update_status',task_id=task[0],status=task[6])}}">
+                                <button style="background-color: rgb(24, 114, 193); color: white;">{% if task[6]!=1%}Done{% else %} Undo {% endif %}</button></a>
+                            </td> 
+                        </tr>                            
+                    {% endfor %}                    
+                </table>
+            </div>
+        </div>
+        
+    {% else %}    
+        <h1 style="padding-top: 50px;">No Tasks found</h1>
+        <h6 style="justify-content:center;">
+            <button type="button" style="background-color: green;" data-bs-toggle="modal" data-bs-target="#addtask">
+                <i class="fas fa-plus"> New Task</i>
+            </button>
+        </h6>
+        <img src="http://127.0.0.1:5000/static/images/nolist.svg" style="display: block; margin:auto; opacity: 40%; width: 300px;">
+    {% endif %}
+    <div class="modal fade" id="addtask" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    Add Task
+                </div>
+                <form method="post" action="{{url_for('add_task')}}">
+                <div class="modal-body"> 
+                    <label for="title">Title</label><br>    
+                    <input type="text" id="title" name="title" required><br>
+                    <label for="duedate">Due Date</label> <br>  
+                    <input type="date" id="duedate" name="duedate"><br>
+                    <label for="list">List</label><br>
+                    <select id="list" name="list">
+                        {% for list in lists %}
+                        <option value={{list[1]}} {% if list[1]== session["list"] or (list[1]=='Default' and session['list'] == "All lists" )%} selected {% endif %}>{{list[1]}}</option>
+                        {% endfor %}                       
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+                </form>      
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
