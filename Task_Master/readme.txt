@@ -29,10 +29,11 @@ The following dependencies are required to run the application:
     Werkzeug==3.0.0
 
 Installation Steps:
-    Clone the repository from GitHub using git clone https://github.com/your-username/task-manager.git
+    Clone the repository from GitHub using git clone https://github.com/vishnupriyamurugavel/Task-Master.git
     Create a virtual environment with python -m venv env
     Activate the virtual environment with source env/Scripts/activate
     Install the dependencies with pip install -r requirements.txt
+    create config.py file with SECRET_KEY = "secretkey"
     Run the application with flask run
     Open a web browser and navigate to http://localhost:5000/
 
